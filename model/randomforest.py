@@ -14,12 +14,12 @@ random.seed(seed)
 # This file already contain the code for implementing randomforest model
 # Carefully observe the methods below and try calling them in modelling.py
 
-class RandomForest(BaseModel):
+class RandomForestModel(BaseModel):
     def __init__(self,
                  model_name: str,
                  embeddings: np.ndarray,
                  y: np.ndarray) -> None:
-        super(RandomForest, self).__init__()
+        super(RandomForestModel, self).__init__()
         self.model_name = model_name
         self.embeddings = embeddings
         self.y = y
