@@ -18,7 +18,8 @@ class RandomForestModel(BaseModel):
     def __init__(self,
                  model_name: str,
                  embeddings: np.ndarray,
-                 y: np.ndarray) -> None:
+                 y: np.ndarray,
+                 n_estimators: int = 1000) -> None:
         super(RandomForestModel, self).__init__()
         self.model_name = model_name
         self.embeddings = embeddings
@@ -31,8 +32,19 @@ class RandomForestModel(BaseModel):
         self.mdl = self.mdl.fit(data.X_train, data.y_train)
 
     def predict(self, X_test: pd.Series):
+        """
+        Generates predictions for the test data
+
+        Args:
+            X_test pandas series: The test feature matrix.
+
+        Returns:
+            np.ndarray: the predictions for the test set.
+        """
+
         predictions = self.mdl.predict(X_test)
         self.predictions = predictions
+        return predictions  # return predictions
 
     def print_results(self, data):
         print(classification_report(data.y_test, self.predictions))

@@ -85,26 +85,30 @@ def perform_modelling(data, df, classifier_type, **kwargs):
     """
     # Instantiate the classifier using the Factory
     print(f"Main | Using classifier: {classifier_type}")
-    classifier = ClassifierFactory.get_classifier(classifier_type, **kwargs)
 
-    # Split the data into training and testing sets
-    print("Main | Splitting data into training and testing sets...")
-    X_train, X_test, y_train, y_test = data.get_train_test_split()
+    classifier = ClassifierFactory.get_classifier(
+        classifier_type=classifier_type,
+        model_name="RandomForest",
+        embeddings=data.X_train,
+        y=data.y_train,
+        **kwargs
+    )
 
     # Train the classifier
     print("Main | Training the classifier...")
-    classifier.train(X_train, y_train)
+    classifier.train(data)
 
     # Make predictions
     print("Main | Making predictions...")
-    predictions = classifier.predict(X_test)
+    predictions = classifier.predict(data.X_test)
 
     # Evaluate the model
     print("Main | Evaluating the model...")
-    evaluate_model(predictions, y_test)
+    evaluate_model(predictions, data.y_test)
 
     # Log predictions (optional, depending on your requirements)
     print(f"Main | Model predictions:\n{predictions}")
+
 
 
 # Code execution starts here

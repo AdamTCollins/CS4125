@@ -40,7 +40,7 @@ class Data:
         print("Data Model | Splitting data into train and test sets...")
         y = self.df["y2"]  # Assuming "y2" is the target label
         X_train, X_test, y_train, y_test = train_test_split(self.X, y, test_size=test_size, random_state=random_state)
-        print(f"Data Model | Training set: {len(X_train)} samples, Testing set: {len(X_test)} samples.")
+        print(f"Data Model | Training set: {X_train.shape[0]} samples, Testing set: {X_test.shape[0]} samples.")
         return X_train, X_test, y_train, y_test
 
     def get_type(self):
