@@ -24,7 +24,11 @@ class ClassifierFactory:
             ValueError: If the classifier_type is invalid.
         """
         if classifier_type == "random_forest":
-            return RandomForestModel(**kwargs)
+            model_name = kwargs.get("model_name", "RandomForest")
+            embeddings = kwargs["embeddings"]
+            y = kwargs["y"]
+            n_estimators = kwargs.get("n_estimators", 1000)
+            return RandomForestModel(model_name, embeddings, y, n_estimators=n_estimators)
         elif classifier_type == "svm":
             return SVMModel(**kwargs)
         elif classifier_type == "neural_network":

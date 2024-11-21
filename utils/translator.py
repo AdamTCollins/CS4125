@@ -1,5 +1,14 @@
 import stanza
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
+from stanza.pipeline.core import DownloadMethod
+
+'''
+Supressing future warnings, It currently throws a warning for a potential security issue for loading untrusted models.
+We are using trusted models from hugging face and stanza, so it's not a concern (*^▽^*)
+'''
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 
 class Translator:
     """
