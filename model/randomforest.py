@@ -1,3 +1,6 @@
+# Random Forest Model
+
+# Imports
 import numpy as np
 import pandas as pd
 from model.base import BaseModel
@@ -5,14 +8,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from numpy import *
 import random
+
+
 num_folds = 0
 seed =0
 # Data
 np.random.seed(seed)
 random.seed(seed)
 
-# This file already contain the code for implementing randomforest model
-# Carefully observe the methods below and try calling them in modelling.py
 
 class RandomForestModel(BaseModel):
     def __init__(self,
@@ -31,21 +34,14 @@ class RandomForestModel(BaseModel):
     def train(self, data) -> None:
         self.mdl = self.mdl.fit(data.X_train, data.y_train)
 
+
+    # Generating predictions for the test data.
     def predict(self, X_test: pd.Series):
-        """
-        Generates predictions for the test data
-
-        Args:
-            X_test pandas series: The test feature matrix.
-
-        Returns:
-            np.ndarray: the predictions for the test set.
-        """
-
         predictions = self.mdl.predict(X_test)
         self.predictions = predictions
         return predictions  # return predictions
 
+    # Printing results.
     def print_results(self, data):
         print(classification_report(data.y_test, self.predictions))
 
