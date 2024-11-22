@@ -11,7 +11,7 @@ from model.neural_network import NeuralNetworkModel
 class ClassifierFactory:
 
     @staticmethod
-    def get_classifier(classifier_type, **kwargs):
+    def get_classifier(data, df, classifier_type, **kwargs):
         """
         Dynamically create a classifier instance.
 
