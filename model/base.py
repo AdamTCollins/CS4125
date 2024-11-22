@@ -1,5 +1,7 @@
-from abc import ABC, abstractmethod
+# Base Model
 
+# Imports
+from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
 from sklearn import utils
@@ -9,21 +11,13 @@ class BaseModel(ABC):
     def __init__(self) -> None:
         ...
 
-
+    # Training the model to use ML models for multi-class and multi-label classification.
     @abstractmethod
     def train(self) -> None:
-        """
-        Train the model using ML Models for Multi-class and mult-label classification.
-        :params: df is essential, others are model specific
-        :return: classifier
-        """
         ...
 
     @abstractmethod
     def predict(self) -> int:
-        """
-
-        """
         ...
 
     @abstractmethod

@@ -1,12 +1,14 @@
-# The purpose of our factory pattern is to dynamically create instances of classifiers.
+# Factory Pattern
+# Used to dynamically create instances of classifiers.
 
+# Imports
 from model.randomforest import RandomForestModel
 from model.svm import SVMModel
 from model.neural_network import NeuralNetworkModel
 
 
+# Factory Class that creates a classifier instance based on the type.
 class ClassifierFactory:
-    """Factory class to create classifier instances based on type."""
 
     @staticmethod
     def get_classifier(classifier_type, **kwargs):

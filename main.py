@@ -1,90 +1,53 @@
 # This is the main file: The controller. All methods will directly or indirectly be called here
+
+# Imports
 import sys
 import os
-
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from utils.preprocess import get_input_data, preprocess_data  # Importing preprocessing functions
-from embeddings import get_tfidf_embd  # Importing embedding generator
-from modelling.modelling import evaluate_model  # Importing evaluation function
-from modelling.data_model import Data  # Importing the Data class
-from classifier.factory import ClassifierFactory  # Importing the Factory for classifiers
-from Config import Config  # Importing the Config class
+from utils.preprocess import get_input_data, preprocess_data
+from embeddings import get_tfidf_embd
+from modelling.modelling import evaluate_model
+from modelling.data_model import Data
+from classifier.factory import ClassifierFactory
+from Config import Config
 import random
 import numpy as np
 
-# Set random seeds for reproducibility
+# Setting random seeds for reproducibility
 seed = 0
 random.seed(seed)
 np.random.seed(seed)
 
-
+# Loading the input data from the CSV.
 def load_data():
-    """
-    Load the input data from a CSV file.
-
-    Returns:
-        pd.DataFrame: Loaded dataframe.
-    """
-    file_path = "datasets/AppGallery.csv"  # Adjust the path to match the dataset location
+    file_path = "datasets/AppGallery.csv"
     df = get_input_data(file_path)
     return df
 
 
+# Preprocessing the loaded data.
 def preprocess_data_step(df):
-    """
-    Preprocess the loaded data.
-
-    Args:
-        df (pd.DataFrame): Input dataframe.
-
-    Returns:
-        pd.DataFrame: Preprocessed dataframe.
-    """
     df = preprocess_data(df)
     return df
 
 
+# Generating embeddings from the preprocessed data.
 def get_embeddings(df):
-    """
-    Generate embeddings from the preprocessed data.
-
-    Args:
-        df (pd.DataFrame): Preprocessed dataframe.
-
-    Returns:
-        tuple: Features (X) and the original dataframe (df).
-    """
     print("Main | Generating TF-IDF embeddings...")
     X = get_tfidf_embd(df)  # Generate TF-IDF embeddings
     return X, df
 
 
+# Creating a data object for modelling.
 def get_data_object(X, df):
-    """
-    Create a Data object for modelling.
-
-    Args:
-        X (np.ndarray): Features matrix.
-        df (pd.DataFrame): Original dataframe.
-
-    Returns:
-        Data: Data object.
-    """
     print("Main | Creating Data object...")
     return Data(X, df)
 
 
+# Performing modelling using the chosen classifier.
 def perform_modelling(data, df, classifier_type, **kwargs):
-    """
-    Perform modelling using the specified classifier type.
 
-    Args:
-        data (Data): Data object containing features and labels.
-        df (pd.DataFrame): Original data frame.
-        classifier_type (str): Type of classifier (e.g., 'random_forest', 'svm', 'neural_network').
-        kwargs: Additional parameters for the classifier.
-    """
-    # Instantiate the classifier using the Factory
+    # Instantiating the classifier using the factory.
     print(f"Main | Using classifier: {classifier_type}")
     if classifier_type == 'random_forest':
         classifier = ClassifierFactory.get_classifier(
@@ -118,51 +81,59 @@ def perform_modelling(data, df, classifier_type, **kwargs):
         print(f"{classifier_type} is not a valid classifier type.")
 
 
+# Executing the complete workflow for training, predicting and evaluation a classifier.
 def execute_model_workflow(classifier):
-    """ Executes the complete workflow for training, predicting, and evaluating a classifier."""
-    # Train the classifier
+
+    # Training the classifier.
     print("Main | Training the classifier...")
     classifier.train(data.X_train, data.y_train)
 
-    # Make predictions
+    # Making predictions.
     print("Main | Making predictions...")
     predictions = classifier.predict(data.X_test)
 
-    # Evaluate the model
+    # Evaluating the model.
     print("Main | Evaluating the model...")
     evaluate_model(predictions, data.y_test)
 
-    # Log predictions (optional, depending on your requirements)
+    # Logging predictions.
     print(f"Main | Model predictions:\n{predictions}")
 
 
-# Code execution starts here
+# Executing Code.
 if __name__ == '__main__':
-    print("Main | Starting the email classification process...")
+    # CLI to ask user which model to use.
+    print("Choose a classifier type: [random_forest, svm, neural_network]")
+    classifier_type = input("Enter classifier type: ").strip()
 
-    # Step 1: Load raw data
+    if classifier_type not in ['random_forest', 'svm', 'neural_network']:
+        print("Invalid classifier type. Please choose from 'random_forest', 'svm', or 'neural_network'.")
+        sys.exit(1)
+
+    print(f"Main | Starting the email classification process with {classifier_type} classifier...")
+
+    # Loading the raw data.
     print("Main | Loading raw data...")
     df = load_data()
 
-    # Step 2: Preprocess the data
+    # Preprocessing the data.
     print("Main | Preprocessing data...")
     df = preprocess_data_step(df)
 
-    # Ensure columns are in the correct format
+    # Ensuring columns are in the correct format.
     df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].values.astype('U')
     df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
 
-    # Step 3: Generate embeddings
+    # Generating the embeddings.
     print("Main | Generating embeddings...")
     X, group_df = get_embeddings(df)
 
-    # Step 4: Create a Data object
+    # Creating a data object.
     print("Main | Creating a Data object...")
     data = get_data_object(X, df)
 
-    # Step 5: Perform modelling
+    # Performing modelling.
     print("Main | Starting the modelling process...")
-    classifier_type = 'svm'  # Choose classifier dynamically ('random_forest', 'svm', 'neural_network')
     perform_modelling(data, df, classifier_type, n_estimators=100)  # Pass additional classifier parameters if needed
 
     print("Main | Email classification process completed.")

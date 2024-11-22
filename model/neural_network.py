@@ -1,3 +1,6 @@
+# Neural Network Model
+
+# Imports
 from sklearn.neural_network import MLPClassifier
 from model.base import BaseModel
 

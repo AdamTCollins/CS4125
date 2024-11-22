@@ -1,8 +1,11 @@
+# Embedding File
+
+# Imports
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 def get_tfidf_embd(df, column_name="Interaction content"):
     """
-    Convert text data into TF-IDF embeddings.
+    Converting text data into TF-IDF embeddings.
 
     Args:
         df (pd.DataFrame): Input dataframe.

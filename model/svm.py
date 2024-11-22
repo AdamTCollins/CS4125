@@ -1,3 +1,6 @@
+# SVM Model
+
+# Imports
 from sklearn.svm import SVC
 from model.base import BaseModel
 
