@@ -14,5 +14,5 @@ if __name__ == '__main__':
     data = facade.get_data_object(X, df)
 
     # select model to run here
-    model_name = "random_forest"
-    facade.perform_modelling(data, model_name)
+    model_name = "neural_network"
+    facade.perform_modelling(data, df, model_name)

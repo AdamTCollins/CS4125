@@ -53,7 +53,7 @@ class ClassifierFacade:
     def get_data_object(self, X, df):
         return self.Data(X, df)
 
-    def perform_modelling(self, data, model_name, **kwargs):
+    def perform_modelling(self, data, df, model_name, **kwargs):
         """
         Train and evaluate the selected model using the ModelFactory.
 
@@ -66,12 +66,15 @@ class ClassifierFacade:
 
         # passing data required for the model
         kwargs.update({
+            "data": data,
             "embeddings": data.X_train,
+            "df": df,
+            "classifier_type": model_name,
             "y": data.y_train,
         })
 
         # getting the model instance from factory
-        model = ClassifierFactory.get_classifier(model_name, **kwargs)
+        model = ClassifierFactory.get_classifier(**kwargs)
 
         # training
         print(f"Modelling | Training the {model_name} model")

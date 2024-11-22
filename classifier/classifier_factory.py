@@ -32,8 +32,20 @@ class ClassifierFactory:
             n_estimators = kwargs.get("n_estimators", 1000)
             return RandomForestModel(model_name, embeddings, y, n_estimators=n_estimators)
         elif classifier_type == "svm":
-            return SVMModel(**kwargs)
+            model_name = kwargs.get("model_name", "SVM")
+            kernel = kwargs.get("kernel", "linear")
+            C = kwargs.get("C", 1.0)
+            return SVMModel(model_name, kernel=kernel, C=C)
         elif classifier_type == "neural_network":
-            return NeuralNetworkModel(**kwargs)
+            model_name = kwargs.get("model_name", "NeuralNetwork")
+            hidden_layer_sizes = kwargs.get("hidden_layer_sizes", (100,))
+            activation = kwargs.get("activation", "relu")
+            solver = kwargs.get("solver", "adam")
+            return NeuralNetworkModel(
+                model_name=model_name,
+                hidden_layer_sizes=hidden_layer_sizes,
+                activation=activation,
+                solver=solver,
+            )
         else:
             raise ValueError(f"Unknown classifier type: {classifier_type}")
