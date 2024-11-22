@@ -79,7 +79,7 @@ def preprocess_data(df):
 
     # Renaming columns for consistency.
     print("Preprocess | Renaming columns for consistency...")
-    df["x"] = df[Config.INTERACTION_CONTENT]
+    df["Interaction content"] = df[Config.INTERACTION_CONTENT]
     df["y1"] = df[Config.TYPE_1]
     df["y2"] = df[Config.TYPE_2]
     df["y3"] = df[Config.TYPE_3]
