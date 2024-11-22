@@ -1,6 +1,7 @@
 # This is the main file: The controller. All methods will directly or indirectly be called here
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from utils.preprocess import get_input_data, preprocess_data  # Importing preprocessing functions
 from embeddings import get_tfidf_embd  # Importing embedding generator
@@ -85,18 +86,43 @@ def perform_modelling(data, df, classifier_type, **kwargs):
     """
     # Instantiate the classifier using the Factory
     print(f"Main | Using classifier: {classifier_type}")
+    if classifier_type == 'random_forest':
+        classifier = ClassifierFactory.get_classifier(
+            classifier_type=classifier_type,
+            model_name="RandomForest",
+            embeddings=data.X_train,
+            y=data.y_train,
+            **kwargs
+        )
+        execute_model_workflow(classifier)
 
-    classifier = ClassifierFactory.get_classifier(
-        classifier_type=classifier_type,
-        model_name="RandomForest",
-        embeddings=data.X_train,
-        y=data.y_train,
-        **kwargs
-    )
+    elif classifier_type == 'svm':
+        classifier = ClassifierFactory.get_classifier(
+            classifier_type="svm",
+            model_name="SVMClassifier",
+            kernel="linear",
+            C=1.0
+        )
+        execute_model_workflow(classifier)
 
+    elif classifier_type == 'neural_network':
+        classifier = ClassifierFactory.get_classifier(
+            classifier_type="neural_network",
+            model_name="NeuralNet",
+            hidden_layer_sizes=(50, 50),
+            activation="relu",
+            solver="adam"
+        )
+        execute_model_workflow(classifier)
+    else:
+        print(f"{classifier_type} is not a valid classifier type.")
+
+
+def execute_model_workflow(classifier):
+    """ Executes the complete workflow for training, predicting, and evaluating a classifier."""
     # Train the classifier
     print("Main | Training the classifier...")
-    classifier.train(data)
+    classifier.train(data.X_train, data.y_train)
 
     # Make predictions
     print("Main | Making predictions...")
@@ -108,7 +134,6 @@ def perform_modelling(data, df, classifier_type, **kwargs):
 
     # Log predictions (optional, depending on your requirements)
     print(f"Main | Model predictions:\n{predictions}")
-
 
 
 # Code execution starts here
@@ -137,7 +162,7 @@ if __name__ == '__main__':
 
     # Step 5: Perform modelling
     print("Main | Starting the modelling process...")
-    classifier_type = 'random_forest'  # Choose classifier dynamically ('random_forest', 'svm', 'neural_network')
+    classifier_type = 'svm'  # Choose classifier dynamically ('random_forest', 'svm', 'neural_network')
     perform_modelling(data, df, classifier_type, n_estimators=100)  # Pass additional classifier parameters if needed
 
     print("Main | Email classification process completed.")
