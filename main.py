@@ -20,6 +20,8 @@ seed = 0
 random.seed(seed)
 np.random.seed(seed)
 
+
+
 # Loading the input data from the CSV.
 def load_data():
     file_path = "datasets/AppGallery.csv"
@@ -206,6 +208,22 @@ if __name__ == '__main__':
     # Performing modelling.
     print("Main | Starting the modelling process...")
     perform_modelling(data, df, classifier_type, n_estimators=100)  # Pass additional classifier parameters if needed
+    engine = modelengine()
+
+    available_classifiers = ['random_forest', 'svm', 'neural_network']
+    print("Main | Dynamically switching between models...")
+    best_model_name = dynamically_switch_models(engine, data, df, available_classifiers, metric_threshold=0.9)
+
+    print("Main | Using the active model for predictions...")
+    active_model = engine.get_active_model()
+    if active_model:
+        predictions = active_model.predict(data.X_test)
+        print(f"Main | Final predictions:\n{predictions}")
+
+    # # Step 5: Perform modelling
+    # print("Main | Starting the modelling process...")
+    # classifier_type = 'random_forest'  # Choose classifier dynamically ('random_forest', 'svm', 'neural_network')
+    # perform_modelling(data, df, classifier_type, n_estimators=100)  # Pass additional classifier parameters if needed
     engine = modelengine()
 
     available_classifiers = ['random_forest', 'svm', 'neural_network']
