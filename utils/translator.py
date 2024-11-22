@@ -56,12 +56,9 @@ class Translator:
         return doc.lang
 
     def translate(self, text):
-        """
-        translates the given text to english if it is not in english
-        """
 
-        if not text.strip():
-            return text  # return empty text
+        if not isinstance(text, str) or not text.strip():
+            return text
 
         detected_lang = self.detect_language(text)
         if detected_lang == "en":
