@@ -9,7 +9,7 @@ class ClassifierFactory:
     """Factory class to create classifier instances based on type."""
 
     @staticmethod
-    def get_classifier(classifier_type, **kwargs):
+    def get_classifier(data, df, classifier_type, **kwargs):
         """
         Dynamically create a classifier instance.
 
