@@ -18,13 +18,14 @@ def evaluate_model(predictions, y_test, export_path=None, export_format="csv"):
     precision = precision_score(y_test, predictions, average='weighted')
     recall = recall_score(y_test, predictions, average='weighted')
     f1 = f1_score(y_test, predictions, average='weighted')
+    class_report = classification_report(y_test, predictions)
 
     print("Modelling | Evaluating model performance...")
     print("Accuracy:", accuracy_score(y_test, predictions))
     print("Precision:", precision_score(y_test, predictions, average='weighted'))
     print("Recall:", recall_score(y_test, predictions, average='weighted'))
     print("F1 Score:", f1_score(y_test, predictions, average='weighted'))
-    print("\nClassification Report:\n", classification_report(y_test, predictions))
+    print("\nClassification Report:\n", class_report)
 
     if export_path:
         metrics = {
@@ -37,6 +38,7 @@ def evaluate_model(predictions, y_test, export_path=None, export_format="csv"):
         data = {
             "metrics": metrics,
             "predictions": list(predictions),
+            "classification_report": class_report
         }
 
         exporter = ExportFactory.get_exporter(export_format)

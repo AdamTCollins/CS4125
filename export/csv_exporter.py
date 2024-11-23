@@ -22,6 +22,11 @@ class CSVExporter(ExportInterface):
                     for metric, value in data["metrics"].items():
                         writer.writerow([metric, value])
 
+                if "classification_report" in data:
+                    writer.writerow([])
+                    writer.writerow(["Classification Report"])
+                    writer.writerow([data["classification_report"]])
+
                 if "predictions" in data:
                     writer.writerow([])
                     writer.writerow(["Predictions"])
