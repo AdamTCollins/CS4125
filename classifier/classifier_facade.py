@@ -1,13 +1,17 @@
 import random
 import numpy as np
+
+from model.strategies.neural_network_strategy import NeuralNetworkStrategy
+from model.strategies.random_forest_strategy import RandomForestStrategy
+from model.strategies.svm_strategy import SVMStrategy
+from model.model_context import ModelContext
 from utils.preprocess import get_input_data, de_duplication, noise_remover, translate_to_en, preprocess_data
 from embeddings import get_tfidf_embd
 from modelling.data_model import Data
 from modelling.modelling import evaluate_model
 from Config import Config
-from model.svm import SVMModel
-from model.randomforest import RandomForestModel
-from classifier.classifier_factory import ClassifierFactory  # Import your factory class
+from classifier.classifier_factory import ClassifierFactory
+
 
 
 class ClassifierFacade:
@@ -46,12 +50,35 @@ class ClassifierFacade:
         """
         return self.preprocess_data(df)
 
+    def choose_strategy(self, strategy_name):
+        """
+        Choose the strategy to be used for modelling
+        """
+        if strategy_name == "RandomForest":
+            return RandomForestStrategy()
+        elif strategy_name == "SVM":
+            return SVMStrategy()
+        elif strategy_name == "NeuralNetwork":
+            return NeuralNetworkStrategy()
+        else:
+            raise ValueError(f"Strategy not found: {strategy_name}")
+
     def get_embeddings(self, df):
         X = self.get_tfidf_embd(df)
         return X, df
 
     def get_data_object(self, X, df):
         return self.Data(X, df)
+
+    def train_and_evaluate(self, data, strategy_name):
+        """
+        Applies strategy and trains/evaluates the model.
+        """
+        strategy = self.choose_strategy(strategy_name)
+
+        context = ModelContext(strategy)
+        context.train(data)
+        context.evaluate(data)
 
     def perform_modelling(self, data, df, model_name, **kwargs):
         """

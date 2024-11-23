@@ -1,4 +1,5 @@
 from classifier.classifier_facade import ClassifierFacade
+from classifier.classifier_factory import ClassifierFactory
 
 if __name__ == '__main__':
     facade = ClassifierFacade()
@@ -13,6 +14,12 @@ if __name__ == '__main__':
     X, group_df = facade.get_embeddings(df)
     data = facade.get_data_object(X, df)
 
-    # select model to run here
+    print("Using facade to create a RandomForest model...")
+    facade.train_and_evaluate(data, strategy_name="RandomForest")
+    print("Using facade to create a SVM model...")
+    facade.train_and_evaluate(data, strategy_name="SVM")
+    print("Using facade to create a NeuralNetwork model...")
+    facade.train_and_evaluate(data, strategy_name="NeuralNetwork")
+
     model_name = "neural_network"
     facade.perform_modelling(data, df, model_name)
