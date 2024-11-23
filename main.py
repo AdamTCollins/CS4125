@@ -21,5 +21,5 @@ if __name__ == '__main__':
     print("Using facade to create a NeuralNetwork model...")
     facade.train_and_evaluate(data, strategy_name="NeuralNetwork")
 
-    model_name = "neural_network"
+    model_name = "random_forest"
     facade.perform_modelling(data, df, model_name)
