@@ -22,7 +22,7 @@ if __name__ == '__main__':
     facade.train_and_evaluate(data, strategy_name="NeuralNetwork")
 
     model_name = "random_forest"
-    export_path = "results_random_forest.csv"
+    export_path = "output/results_random_forest.csv"
     export_format = "csv"
     facade.perform_modelling(data, df, model_name, export_path=export_path, export_format=export_format)
 
