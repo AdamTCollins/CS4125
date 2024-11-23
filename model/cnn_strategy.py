@@ -8,5 +8,9 @@ class CNNStrategy(ABC):
         pass
 
     @abstractmethod
+    def predict(self, data):
+        pass
+
+    @abstractmethod
     def evaluate(self, data):
         pass

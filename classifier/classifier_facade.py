@@ -12,8 +12,6 @@ from modelling.modelling import evaluate_model
 from Config import Config
 from classifier.classifier_factory import ClassifierFactory
 
-
-
 class ClassifierFacade:
     def __init__(self, seed=0):
         self.random = random
@@ -50,12 +48,12 @@ class ClassifierFacade:
         """
         return self.preprocess_data(df)
 
-    def choose_strategy(self, strategy_name):
+    def choose_strategy(self, strategy_name, **kwargs):
         """
         Choose the strategy to be used for modelling
         """
         if strategy_name == "RandomForest":
-            return RandomForestStrategy()
+            return RandomForestStrategy(**kwargs)
         elif strategy_name == "SVM":
             return SVMStrategy()
         elif strategy_name == "NeuralNetwork":
@@ -70,15 +68,40 @@ class ClassifierFacade:
     def get_data_object(self, X, df):
         return self.Data(X, df)
 
-    def train_and_evaluate(self, data, strategy_name):
+    def train_and_evaluate(self, data, df, strategy_name, **kwargs):
         """
-        Applies strategy and trains/evaluates the model.
-        """
-        strategy = self.choose_strategy(strategy_name)
+        Train and evaluate the selected model using the Strategy Pattern.
 
+        Args:
+            df: DataFrame used for training and evaluation.
+            strategy_name: Name of the strategy/model.
+            data: The processed Data object containing train/test splits.
+            kwargs: Additional arguments for model initialization.
+        """
+        print(f"Modelling | Initializing the {strategy_name} model...")
+
+        kwargs.update({
+            "data": data,
+            "embeddings": data.X_train,
+            "df": df,
+            "classifier_type": strategy_name,
+            "y": data.y_train,
+        })
+
+        strategy = ClassifierFactory.get_classifier(**kwargs)
         context = ModelContext(strategy)
+
+        # Training the model
+        print(f"Modelling | Training the {strategy_name} model...")
         context.train(data)
-        context.evaluate(data)
+
+        # Making predictions
+        print(f"Modelling | Making predictions with the {strategy_name} model...")
+        predictions = context.predict(data.X_test)
+
+        # Evaluating the model
+        print(f"Modelling | Evaluating the {strategy_name} model...")
+        self.evaluate_model(predictions, data.y_test)
 
     def perform_modelling(self, data, df, model_name, **kwargs):
         """
