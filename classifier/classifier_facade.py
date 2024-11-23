@@ -11,6 +11,7 @@ from modelling.data_model import Data
 from modelling.modelling import evaluate_model
 from Config import Config
 from classifier.classifier_factory import ClassifierFactory
+from export.export_factory import ExportFactory
 
 
 
@@ -80,6 +81,20 @@ class ClassifierFacade:
         context.train(data)
         context.evaluate(data)
 
+
+    def export_results(self, data, file_path, format_type):
+        """
+        Export results using the specified format.
+
+        Args:
+            data (dict): The results to export.
+            file_path (str): Path for the exported file.
+            format_type (str): Format type (e.g., "csv").
+        """
+        exporter = ExportFactory.get_exporter(format_type)
+        exporter.export(data, file_path)
+
+
     def perform_modelling(self, data, df, model_name, **kwargs):
         """
         Train and evaluate the selected model using the ModelFactory.
@@ -113,5 +128,4 @@ class ClassifierFacade:
 
         # evaluating the model
         print(f"Modelling | Evaluating the {model_name} model")
-        self.evaluate_model(predictions, data.y_test)
-
+        self.evaluate_model(predictions, data.y_test, export_format="csv", export_path="results.csv")
