@@ -18,5 +18,11 @@ class SVMModel(BaseModel):
     def predict(self, X_test):
         return self.model.predict(X_test)
 
+    def evaluate(self, data):
+        print("Evaluating SVM...")
+        x_test, y_test = data
+        accuracy = self.model.score(x_test, y_test)
+        print(f"Test Accuracy: {accuracy}")
+
     def data_transform(self) -> None:
         ...
