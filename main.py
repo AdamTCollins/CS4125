@@ -15,11 +15,12 @@ if __name__ == '__main__':
     data = facade.get_data_object(X, df)
 
     print("Using facade to create a RandomForest model...")
-    facade.train_and_evaluate(data, strategy_name="RandomForest")
+    facade.train_and_evaluate(data, df, strategy_name="random_forest")
     print("Using facade to create a SVM model...")
-    facade.train_and_evaluate(data, strategy_name="SVM")
+    facade.train_and_evaluate(data, df, strategy_name="svm")
     print("Using facade to create a NeuralNetwork model...")
-    facade.train_and_evaluate(data, strategy_name="NeuralNetwork")
-
-    model_name = "random_forest"
-    facade.perform_modelling(data, df, model_name)
+    facade.train_and_evaluate(data, df, strategy_name="neural_network")
+    print("Using facade to create a KNN model...")
+    facade.train_and_evaluate(data, df, strategy_name="knn")
+    print("Using facade to create a XGBoost model...")
+    facade.train_and_evaluate(data, df, strategy_name="xgboost")
