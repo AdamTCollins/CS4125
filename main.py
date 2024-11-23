@@ -1,8 +1,11 @@
+from datetime import datetime
+
 from classifier.classifier_facade import ClassifierFacade
 from classifier.classifier_factory import ClassifierFactory
 
 if __name__ == '__main__':
     facade = ClassifierFacade()
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     file_path="datasets/AppGallery.csv"
     df = facade.load_data(file_path)
@@ -14,16 +17,13 @@ if __name__ == '__main__':
     X, group_df = facade.get_embeddings(df)
     data = facade.get_data_object(X, df)
 
-    export_path = "output/results_random_forest.csv"
-    export_format = "csv"
+
+    # Select from the following: random_forest, svm, neural_network, knn, xgboost
     model_name = "random_forest"
+    # export format
+    export_format = "csv"
+    # export path
+    export_path = f"output/result_{model_name}_{timestamp}.{export_format}"
 
 
-    print("Using facade to create a RandomForest model...")
-    facade.train_and_evaluate(data, df, strategy_name="random_forest")
-    print("Using facade to create a SVM model...")
-    facade.train_and_evaluate(data, df, strategy_name="svm")
-    print("Using facade to create a NeuralNetwork model...")
-    facade.train_and_evaluate(data, df, strategy_name="neural_network")
-
-    facade.perform_modelling(data, df, model_name, export_format=export_format, export_path=export_format)
+    facade.perform_modelling(data, df, model_name, export_format=export_format, export_path=export_path)

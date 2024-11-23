@@ -11,6 +11,8 @@ class JSONExporter(ExportInterface):
             file_path (str): Path to save the JSON file.
         """
         try:
+            super().export(data, file_path)
+
             with open(file_path, "w") as file:
                 json.dump(data, file, indent=4)
             print(f"JSON report exported to {file_path}")

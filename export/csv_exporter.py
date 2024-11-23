@@ -13,7 +13,10 @@ class CSVExporter(ExportInterface):
         Raises:
             ValueError: if the data structure is not as expected.
         """
+
         try:
+            super().export(data, file_path)
+
             with open(file_path, mode="w", newline="") as file:
                 writer = csv.writer(file)
 
