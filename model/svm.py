@@ -10,8 +10,9 @@ class SVMModel(BaseModel):
         self.model = SVC(kernel=kernel, C=C)
         self.model_name = model_name
 
-    def train(self, X_train, y_train):
-        self.model.fit(X_train, y_train)
+
+    def train(self, data):
+        self.model.fit(data.X_train, data.y_train)
 
     def predict(self, X_test):
         return self.model.predict(X_test)
