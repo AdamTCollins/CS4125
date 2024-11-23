@@ -34,7 +34,6 @@ def evaluate_model(predictions, y_test, export_path=None, export_format="csv"):
             "F1-Score": f"{f1:.2%}",
         }
 
-        # Prepare data for export
         data = {
             "metrics": metrics,
             "predictions": list(predictions),

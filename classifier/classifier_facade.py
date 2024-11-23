@@ -95,14 +95,16 @@ class ClassifierFacade:
         exporter.export(data, file_path)
 
 
-    def perform_modelling(self, data, df, model_name, **kwargs):
+    def perform_modelling(self, data, df, model_name, export_path=None, export_format="csv",**kwargs):
         """
         Train and evaluate the selected model using the ModelFactory.
 
         Args:
-            data: The processed Data object containing train/test splits.
-            model_name (str): The name of the model to use.
-            kwargs: Additional arguments for model initialization.
+            :param data: The processed Data object containing train/test splits.
+            :param  (str): The name of the model to use.
+            :param kwargs: Additional arguments for model initialization.
+            :param export_format: Filetype (csv or json)
+            :param export_path: File export path (match export format param)
         """
         print(f"Modelling | Initializing the {model_name} model using ModelFactory...")
 
@@ -128,4 +130,4 @@ class ClassifierFacade:
 
         # evaluating the model
         print(f"Modelling | Evaluating the {model_name} model")
-        self.evaluate_model(predictions, data.y_test, export_format="csv", export_path="results.csv")
+        self.evaluate_model(predictions, data.y_test, export_path=export_path, export_format=export_format)
