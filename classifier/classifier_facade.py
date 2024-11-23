@@ -112,7 +112,7 @@ class ClassifierFacade:
         })
 
         strategy = ClassifierFactory.get_classifier(**kwargs)
-        strategy = self.choose_strategy(strategy_name)
+        #strategy = self.choose_strategy(strategy_name)
         # TODO ~ JOHNNY: ADD OBSERVER NOTIFS here
         context = ModelContext(strategy)
 
