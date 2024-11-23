@@ -32,7 +32,7 @@ class RandomForestModel(BaseModel):
         self.data_transform()
 
     def train(self, data) -> None:
-        self.mdl = self.mdl.fit(data.X_train, data.y_train)
+        self.mdl.fit(data.X_train, data.y_train)
 
 
     # Generating predictions for the test data.

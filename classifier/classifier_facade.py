@@ -5,6 +5,8 @@ from model.strategies.neural_network_strategy import NeuralNetworkStrategy
 from model.strategies.random_forest_strategy import RandomForestStrategy
 from model.strategies.svm_strategy import SVMStrategy
 from model.model_context import ModelContext
+from observers.observer import Publisher
+from observers.subscriber import ConsoleLogger
 from utils.preprocess import get_input_data, de_duplication, noise_remover, translate_to_en, preprocess_data
 from embeddings import get_tfidf_embd
 from modelling.data_model import Data
@@ -28,6 +30,15 @@ class ClassifierFacade:
         self.Data = Data
         self.evaluate_model = evaluate_model
         self.Config = Config
+        self.publisher = Publisher(events=["data_loaded", "preprocessing", "embedding_generation", "training",
+                                           "data_object_creation", "classification", "evaluation", "modelling"])
+
+        # Create the subscriber to the publisher(Observer)
+        # This subscriber will simply output events to the console.
+        self.logger = ConsoleLogger(name="AppLogger")
+        # Register the logger as a subscriber for all events  (Check Publisher class if you are confused)
+        for event in self.publisher.subscribers:
+            self.publisher.register(event=event, who=self.logger)
 
         self.random.seed(seed)
         self.np.random.seed(seed)
@@ -40,6 +51,8 @@ class ClassifierFacade:
         :return pandas Dataframe:
         """
         df = self.get_input_data(file_path)
+        # Observer: Notify subscribers that data has been loaded.
+        self.publisher.dispatch(event="data_loaded", message="Data successfully loaded from file.")
         return df
 
     def preprocess_data(self, df):
@@ -49,6 +62,8 @@ class ClassifierFacade:
         :param df: input dataframe to preprocess.
         :return: processed dataframe.
         """
+        # Observer: Send out the message for Data Preprocessing
+        self.publisher.dispatch(event="preprocessing", message="Data preprocessing completed.")
         return self.preprocess_data(df)
 
     def choose_strategy(self, strategy_name):
@@ -65,10 +80,17 @@ class ClassifierFacade:
             raise ValueError(f"Strategy not found: {strategy_name}")
 
     def get_embeddings(self, df):
+        # Observer: Notify subscribers of the initialisation of embedding generation.
+        self.publisher.dispatch(event="embedding_generation", message="Starting TF-IDF embedding generation...")
         X = self.get_tfidf_embd(df)
+        # Observer: Send out the message for of embedding generation completion.
+        self.publisher.dispatch(event="embedding_generation",
+                                message=f"TF-IDF embeddings generated with shape: {X.shape}.")
         return X, df
 
     def get_data_object(self, X, df):
+        # Observer: Notify subscribers about Data object creation
+        self.publisher.dispatch(event="data_object_creation", message="Data object successfully created.")
         return self.Data(X, df)
 
     def train_and_evaluate(self, data, strategy_name):
@@ -76,7 +98,7 @@ class ClassifierFacade:
         Applies strategy and trains/evaluates the model.
         """
         strategy = self.choose_strategy(strategy_name)
-
+        # TODO ~ JOHNNY: ADD OBSERVER NOTIFS here
         context = ModelContext(strategy)
         context.train(data)
         context.evaluate(data)
@@ -100,13 +122,12 @@ class ClassifierFacade:
         Train and evaluate the selected model using the ModelFactory.
 
         Args:
-            :param data: The processed Data object containing train/test splits.
-            :param  (str): The name of the model to use.
-            :param kwargs: Additional arguments for model initialization.
-            :param export_format: Filetype (csv or json)
-            :param export_path: File export path (match export format param)
+            data: The processed Data object containing train/test splits.
+            model_name (str): The name of the model to use.
+            kwargs: Additional arguments for model initialization.
         """
-        print(f"Modelling | Initializing the {model_name} model using ModelFactory...")
+        # Observer: Notify subscribers about the performing modelling
+        self.publisher.dispatch(event="modelling", message=f"Performing modelling with {model_name}.")
 
         # passing data required for the model
         kwargs.update({
@@ -121,11 +142,9 @@ class ClassifierFacade:
         model = ClassifierFactory.get_classifier(**kwargs)
 
         # training
-        print(f"Modelling | Training the {model_name} model")
         model.train(data)
 
         # making predictions
-        print(f"Modelling | Making predictions with the {model_name} model")
         predictions = model.predict(data.X_test)
 
         # evaluating the model
