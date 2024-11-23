@@ -3,6 +3,7 @@ from model.strategies.neural_network_strategy import NeuralNetworkStrategy
 from model.strategies.random_forest_strategy import RandomForestStrategy
 from model.strategies.svm_strategy import SVMStrategy
 from model.strategies.knn_strategy import KNNStrategy
+from model.strategies.xgboost_strategy import XGBoostStrategy
 
 class ClassifierFactory:
     @staticmethod
@@ -57,5 +58,12 @@ class ClassifierFactory:
             weights = kwargs.get("weights", "uniform")
             return KNNStrategy(model_name=model_name, n_neighbors=n_neighbors, weights=weights)
 
+        elif classifier_type == "xgboost":
+            model_name = kwargs.get("model_name", "XGBoost")
+            max_depth = kwargs.get("max_depth", 6)
+            learning_rate = kwargs.get("learning_rate", 0.1)
+            n_estimators = kwargs.get("n_estimators", 100)
+            return XGBoostStrategy(model_name, max_depth=max_depth, learning_rate=learning_rate,
+                                   n_estimators=n_estimators)
         else:
             raise ValueError(f"Unknown classifier type: {classifier_type}")

@@ -22,6 +22,8 @@ if __name__ == '__main__':
     facade.train_and_evaluate(data, df, strategy_name="neural_network")
     print("Using facade to create a KNN model...")
     facade.train_and_evaluate(data, df, strategy_name="knn")
+    print("Using facade to create a XGBoost model...")
+    facade.train_and_evaluate(data, df, strategy_name="xgboost")
 
     #model_name = "neural_network"
     #facade.perform_modelling(data, df, model_name)
