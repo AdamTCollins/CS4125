@@ -4,7 +4,6 @@
 from datetime import datetime
 from classifier.classifier_facade import ClassifierFacade
 
-
 def display_menu(title, options):
     """
     Displays a menu and prompts the user for a choice.
@@ -86,12 +85,11 @@ def run_classification(facade, df, dataset_name):
 
     # Generating Embeddings.
     print("\nProcessing your request...")
-    print(
-        f"Running Classification with Dataset '{dataset_name}', Model '{model_name}', and Format '{export_format}'...\n")
+    print(f"Running Classification with Dataset '{dataset_name}', Model '{model_name}', and Format '{export_format}'...\n")
 
     try:
-        X, group_df = facade.get_embeddings(df)
-        data = facade.get_data_object(X, df)
+        x, group_df = facade.get_embeddings(df)
+        data = facade.get_data_object(x, df)
 
         # Performing modelling and exporting the results.
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -102,7 +100,7 @@ def run_classification(facade, df, dataset_name):
     except Exception as e:
         print(f"An error occurred during processing: {e}")
 
-if __name__ == '__main__':
+def run_program():
     facade = ClassifierFacade()
 
     print("\n=== Welcome to the Email Classification Tool ===")
@@ -112,7 +110,8 @@ if __name__ == '__main__':
 
     # Main menu loop.
     while True:
-        main_choice = display_menu("Please Choose an Option:", ["Run a Classification", "Change the Dataset", "Quit"])
+        main_choice = display_menu("Please Choose an Option:",
+                                   ["Run a Classification", "Change the Dataset", "Quit"])
 
         if main_choice == 1:
             run_classification(facade, df, dataset_name)
@@ -122,3 +121,6 @@ if __name__ == '__main__':
         elif main_choice == 3:
             print("Thank you. Goodbye!")
             break
+
+if __name__ == '__main__':
+    run_program()
