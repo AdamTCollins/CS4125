@@ -5,6 +5,7 @@ import stanza
 from stanza import DownloadMethod
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
 from stanza.pipeline.core import DownloadMethod
+import pandas as pd
 
 '''
 Supressing future warnings, It currently throws a warning for a potential security issue for loading untrusted models.
@@ -21,6 +22,8 @@ class Translator:
     """
 
     _instance = None
+    translations_csv = "translations.csv"  # Path for saving translations
+    translations = {}  # In-memory cache for translations
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -43,6 +46,7 @@ class Translator:
         # loading stanza
         self.lang_identifier = stanza.Pipeline(lang="multilingual", processors="langid", download_method=DownloadMethod.REUSE_RESOURCES)
         print("Translator | Models loaded successfully")
+        self._load_translations()
 
     def detect_language(self, text):
         """
@@ -56,6 +60,9 @@ class Translator:
         return doc.lang
 
     def translate(self, text):
+
+        if text in self.translations:
+            return self.translations[text]
 
         if not isinstance(text, str) or not text.strip():
             return text
@@ -82,4 +89,23 @@ class Translator:
             **encoded_input, forced_bos_token_id=self.tokenizer.get_lang_id("en")
         )
         translated_text = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
+
+        self.translations[text] = translated_text
+        self._save_translations()
         return translated_text
+
+    def _load_translations(self):
+        """Load existing translations from a CSV file into memory."""
+        try:
+            translations_df = pd.read_csv(self.translations_csv)
+            self.translations = dict(zip(translations_df["original"], translations_df["translated"]))
+            print(f"Loaded {len(self.translations)} translations from {self.translations_csv}")
+        except FileNotFoundError:
+            print(f"No translations file found at {self.translations_csv}. Starting fresh.")
+            self.translations = {}
+
+    def _save_translations(self):
+        """Save current translations to a CSV file."""
+        translations_df = pd.DataFrame(list(self.translations.items()), columns=["original", "translated"])
+        translations_df.to_csv(self.translations_csv, index=False)
+        print(f"Saved {len(self.translations)} translations to {self.translations_csv}")
