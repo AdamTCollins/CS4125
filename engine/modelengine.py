@@ -1,12 +1,12 @@
 class modelengine:
-
     _instance = None
 
     def __new___(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super(modelengine, cls).__new__(cls)
             return cls._instance
-#
+
+    #
     def __init__(self):
         self.models = {}
 

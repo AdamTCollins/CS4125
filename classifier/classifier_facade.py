@@ -5,8 +5,7 @@ from model.strategies.neural_network_strategy import NeuralNetworkStrategy
 from model.strategies.random_forest_strategy import RandomForestStrategy
 from model.strategies.svm_strategy import SVMStrategy
 from model.model_context import ModelContext
-from observers.observer import Publisher
-from observers.subscriber import ConsoleLogger
+from observers.observer_setup import setup_observer
 from utils.preprocess import get_input_data, de_duplication, noise_remover, translate_to_en, preprocess_data
 from embeddings import get_tfidf_embd
 from modelling.data_model import Data
@@ -16,9 +15,10 @@ from classifier.classifier_factory import ClassifierFactory
 from export.export_factory import ExportFactory
 
 
-
 class ClassifierFacade:
     def __init__(self, seed=0):
+        # Set up the publisher with subscribers
+        self.publisher = setup_observer()
         self.random = random
         self.np = np
         self.get_input_data = get_input_data
@@ -30,15 +30,8 @@ class ClassifierFacade:
         self.Data = Data
         self.evaluate_model = evaluate_model
         self.Config = Config
-        self.publisher = Publisher(events=["data_loaded", "preprocessing", "embedding_generation", "training",
-                                           "data_object_creation", "classification", "evaluation", "modelling"])
 
-        # Create the subscriber to the publisher(Observer)
-        # This subscriber will simply output events to the console.
-        self.logger = ConsoleLogger(name="AppLogger")
-        # Register the logger as a subscriber for all events  (Check Publisher class if you are confused)
-        for event in self.publisher.subscribers:
-            self.publisher.register(event=event, who=self.logger)
+
 
         self.random.seed(seed)
         self.np.random.seed(seed)
@@ -83,7 +76,7 @@ class ClassifierFacade:
         # Observer: Notify subscribers of the initialisation of embedding generation.
         self.publisher.dispatch(event="embedding_generation", message="Starting TF-IDF embedding generation...")
         X = self.get_tfidf_embd(df)
-        # Observer: Send out the message for of embedding generation completion.
+        # Observer: Notify subscribers of embedding generation completion.
         self.publisher.dispatch(event="embedding_generation",
                                 message=f"TF-IDF embeddings generated with shape: {X.shape}.")
         return X, df
@@ -114,12 +107,11 @@ class ClassifierFacade:
         })
 
         strategy = ClassifierFactory.get_classifier(**kwargs)
-        #strategy = self.choose_strategy(strategy_name)
-        # TODO ~ JOHNNY: ADD OBSERVER NOTIFS here
+        # strategy = self.choose_strategy(strategy_name)
         context = ModelContext(strategy)
 
         # Training the model
-        print(f"Modelling | Training the {strategy_name} model...")
+        self.publisher.dispatch(event="modelling", message=f"Training the {strategy_name} model...")
         context.train(data)
 
         # Making predictions
@@ -129,7 +121,6 @@ class ClassifierFacade:
         # Evaluating the model
         print(f"Modelling | Evaluating the {strategy_name} model...")
         self.evaluate_model(predictions, data.y_test)
-
 
     def export_results(self, data, file_path, format_type):
         """
@@ -143,8 +134,7 @@ class ClassifierFacade:
         exporter = ExportFactory.get_exporter(format_type)
         exporter.export(data, file_path)
 
-
-    def perform_modelling(self, data, df, model_name, export_path=None, export_format="csv",**kwargs):
+    def perform_modelling(self, data, df, model_name, export_path=None, export_format="csv", **kwargs):
         """
         Train and evaluate the selected model using the ModelFactory.
 
