@@ -45,7 +45,7 @@ class TestFactoryPattern(unittest.TestCase):
 class TestFacadePattern(unittest.TestCase):
     def setUp(self):
         self.facade = ClassifierFacade()
-        self.file_path = "datasets/mock_data.csv"  # Replace with actual test file
+        self.file_path = "datasets/AppGallery.csv"  # Replace with actual test file
 
     def test_load_data(self):
         df = self.facade.load_data(self.file_path)
