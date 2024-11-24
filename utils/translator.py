@@ -79,7 +79,9 @@ class Translator:
             "fro": "fr",
             "la": "it",
             "nn": "no",
-            "kmr": "tr"
+            "kmr": "tr",
+            "zh": "zh",
+            "zh-hans": "zh"
         }
         detected_lang = lang_mappings.get(detected_lang, detected_lang)
 
