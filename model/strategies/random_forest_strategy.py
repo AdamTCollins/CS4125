@@ -2,13 +2,14 @@ import modelling.modelling
 from model.cnn_strategy import CNNStrategy
 import numpy as np
 import pandas as pd
-from model.base import BaseModel
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
-from numpy import *
 import random
-from model.randomforest import RandomForestModel, seed
 
+num_folds = 0
+seed =0
+# Data
+np.random.seed(seed)
+random.seed(seed)
 """
 Strategy class for Random Forest
 """
