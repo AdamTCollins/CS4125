@@ -1,8 +1,10 @@
 from model.cnn_strategy import CNNStrategy
 import pandas as pd
+
 """
 Concrete model class for the model for strategy pattern
 """
+
 
 class ModelContext:
     def __init__(self, strategy: CNNStrategy):
