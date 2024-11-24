@@ -6,7 +6,7 @@ class DataManager:
 
     def save_translations(self, translations):
         """
-        Save translations to a CSV file. Translations should be a dictionary.
+        Save translations to a CSV file so they don't have to be translated every time
         """
         translations_df = pd.DataFrame(list(translations.items()), columns=["original", "translated"])
         translations_df.to_csv(self.translations_csv, index=False)

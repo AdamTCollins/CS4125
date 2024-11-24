@@ -1,12 +1,14 @@
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 from export.export_factory import ExportFactory
+import os
 
-
-def evaluate_model(predictions, y_test, export_path=None, export_format="csv"):
+def evaluate_model(predictions, y_test, export_path, export_format):
     """
     Evaluate the performance of a model.
 
     Args:
+        export_format: csv or json
+        export_path: location for results to be saved
         predictions (np.ndarray): Model predictions.
         y_test (np.ndarray): True labels.
 
@@ -21,13 +23,16 @@ def evaluate_model(predictions, y_test, export_path=None, export_format="csv"):
     class_report = classification_report(y_test, predictions)
 
     print("Modelling | Evaluating model performance...")
-    print("Accuracy:", accuracy_score(y_test, predictions))
-    print("Precision:", precision_score(y_test, predictions, average='weighted'))
-    print("Recall:", recall_score(y_test, predictions, average='weighted'))
-    print("F1 Score:", f1_score(y_test, predictions, average='weighted'))
+    print("Accuracy:", accuracy)
+    print("Precision:", precision)
+    print("Recall:", recall)
+    print("F1 Score:", f1)
     print("\nClassification Report:\n", class_report)
 
-    if export_path:
+    export_dir = os.path.dirname(export_path)
+
+    if export_dir:
+        os.makedirs(export_dir, exist_ok=True)
         metrics = {
             "Accuracy": f"{accuracy:.2%}",
             "Precision": f"{precision:.2%}",

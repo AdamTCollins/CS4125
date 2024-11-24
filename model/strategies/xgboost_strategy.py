@@ -2,7 +2,6 @@ from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
 from model.cnn_strategy import CNNStrategy
 
-
 class XGBoostStrategy(CNNStrategy):
     def __init__(self, model_name="XGBoost", max_depth=6, learning_rate=0.1, n_estimators=100):
         self.model_name = model_name

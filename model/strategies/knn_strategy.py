@@ -10,7 +10,7 @@ class KNNStrategy(CNNStrategy):
         Args:
             model_name (str): Name of the model.
             n_neighbors (int): Number of neighbors to use.
-            weights (str): Weight function used in prediction ('uniform' or 'distance').
+            weights (str): Weight function used in prediction (uniform or distance)
         """
         self.model_name = model_name
         self.model = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights)
